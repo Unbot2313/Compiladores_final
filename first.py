@@ -23,9 +23,14 @@ def recursiveFirst(production: str, Productions: dict[str, list[str]]) -> set[st
 
     if not production:
         return set()
+
+    if production == "e":
+        return {"e"}
     
-    if not isNoTerminal(production[0]):
-        return {production[0]}
+    terminal, position = isNoTerminal(production)
+
+    if not terminal:
+        return {production[position]}
 
     # contruye el set basado en las producciones del no terminal
     first_set = set()
