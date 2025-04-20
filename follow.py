@@ -30,6 +30,10 @@ def getFollowProductions(NormalProductions: dict[str, list[str]], FirstSet: dict
                 # union con el origen
                 NoTerminalSymbol = value[i]
                 FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(newSet)
+
+    # tercera opcion A → αB, or A → αBβ with ε ∈ First(β), then Follow(A) ⊆ Follow(B).
+    for clave, valor in NormalProductions.items():
+        print("Hello")
     
     return FollowProductions
 
@@ -46,6 +50,6 @@ def SecondOption(SegundaParte: str, NormalProductions: dict[str, list[str]]) -> 
     # Verificar si "e" está en el conjunto antes de eliminarlo
     if "e" in FirstSet:
         FirstSet.remove("e")
-        
+
     # hacer union con el FOLLOW DE B (se hace en la funcion global aca solo la devuelve)
     return FirstSet
