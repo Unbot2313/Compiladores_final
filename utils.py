@@ -14,3 +14,19 @@ def isNoTerminal(produccion: str) -> (bool, int):
             
     primera = produccion[value]
     return (primera.isupper(), value)
+
+# literalmente devuelve las posiciones de todos los no terminales en un array sirve para el follow function
+def returnAllPositionsOfNoTerminals(Production: str) -> list[int]:
+    positions: list[int] = list()
+    for i in range(0, len(Production)):
+        if Production == "e":
+            return []
+        # revisa si es terminal
+        IsNotTerminal, _ = isNoTerminal(Production[i])
+        if IsNotTerminal:
+            positions.append(i)
+
+    return positions
+
+
+    
