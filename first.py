@@ -19,6 +19,7 @@ def getFirstOfNonTerminal(clave: str, listOfProductions: list[str], Productions:
         firstList = firstList.union(value_set)
     return (clave, firstList)
 
+# funcion para obtener el first
 def recursiveFirst(production: str, Productions: dict[str, list[str]]) -> set[str]:
 
     if not production:
