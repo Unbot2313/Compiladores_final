@@ -83,8 +83,6 @@ def constructLR0Automaton(productions: dict[str, list[str]], startSymbol: str) -
         
         stateIndex += 1
 
-    print("Estados: ", states)
-    print("Transiciones: ", transitions)
     
     return states, transitions
 
@@ -263,7 +261,7 @@ def ParsingSLR1(table: dict[tuple[int, str], str], productions: dict[str, list[s
             # Manejar caso especial para epsilon (representado como 'e')
             if production == 'e':
                 # No hay que sacar nada de la pila, simplemente añadir el no terminal
-                print(f"Reducción por {noTerminal} -> ε")
+                1 == 1
             else:
                 # Sacar tantos símbolos como longitud de la producción
                 for _ in range(len(production)):

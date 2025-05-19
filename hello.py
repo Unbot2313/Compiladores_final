@@ -9,17 +9,14 @@ from SLR1 import buildSLR1Table, ParsingSLR1
 def main():
     listPosibbleProductions: set[str] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
     Productions: dict[str, list[str]] = getProductions(listPosibbleProductions)
-    print("productions:", Productions)
     if(Productions == None):
         return
 
     # get first productions
     FirstProductions: dict[str, set[str]] = getFirst(Productions)
-    print("first productions:", FirstProductions)
 
     # get follow productions
     FollowProductions: dict[str, set[str]] = computeFollow(Productions, FirstProductions)
-    print("follow productions:", FollowProductions)
 
 
     # Verificar si la gramática es LL(1) y obtener la tabla
