@@ -13,27 +13,24 @@ def getFollowProductions(NormalProductions: dict[str, list[str]], FirstSet: dict
         NewSet = firstOption(clave)
         FollowProductions[clave] = FollowProductions[clave].union(NewSet)
 
-    # Segunda opcion A -> aBC, FIRST(C) - {e} es subcojunto de FOLLOW(B)
     for clave, valor in NormalProductions.items():
         for value in valor:
-            allPositionsOfNoTerminals: list[int] = returnAllPositionsOfNoTerminals(value);
-            # ESTE SERIA C
+            allPositionsOfNoTerminals: list[int] = returnAllPositionsOfNoTerminals(value)
             for i in allPositionsOfNoTerminals:
-                # el nuevo position es para evitar problemas al partir la cadena
-                position = i+1
-                # PARTE CON B
-                PrimeraParte: str = value[:position]
-                # PARTE CON C
-                SegundaParte: str = value[position:]
-                newSet = SecondOption(SegundaParte, NormalProductions)
-
-                # union con el origen
+                position = i + 1
                 NoTerminalSymbol = value[i]
+                SegundaParte: str = value[position:]
+                # Segunda opción
+                newSet = SecondOption(SegundaParte, NormalProductions)
                 FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(newSet)
-
-    # tercera opcion A → αB, or A → αBβ with ε ∈ First(β), then Follow(A) ⊆ Follow(B).
-    for clave, valor in NormalProductions.items():
-        print("Hello")
+                # Tercera opción
+                if position == len(value):  # Caso A → αB
+                    FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FollowProductions[clave])
+                else:  # Caso A → αBβ
+                    Beta = value[position:]
+                    FirstBeta = recursiveFirst(Beta, NormalProductions)
+                    if "e" in FirstBeta:
+                        FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FollowProductions[clave])
     
     return FollowProductions
 
@@ -53,3 +50,24 @@ def SecondOption(SegundaParte: str, NormalProductions: dict[str, list[str]]) -> 
 
     # hacer union con el FOLLOW DE B (se hace en la funcion global aca solo la devuelve)
     return FirstSet
+
+def thirdOption(value: str, clave: str, FollowProductions: dict[str, set[str]], NormalProductions: dict[str, list[str]]) -> dict[str, set[str]]:
+    """
+    Implementa la tercera regla de FOLLOW:
+    Si A → αB o A → αBβ con ε ∈ FIRST(β), entonces FOLLOW(A) ⊆ FOLLOW(B).
+    """
+    allPositionsOfNoTerminals: list[int] = returnAllPositionsOfNoTerminals(value)
+    for i in allPositionsOfNoTerminals:
+        position = i + 1
+        NoTerminalSymbol = value[i]
+
+        if position == len(value):  # Caso A → αB (B es el último símbolo)
+            FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FollowProductions[clave])
+        else:  # Caso A → αBβ
+            Beta = value[position:]
+            FirstBeta = recursiveFirst(Beta, NormalProductions)
+            if "e" in FirstBeta:
+                FirstBeta.remove("e")
+                FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FollowProductions[clave])
+            FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FirstBeta)
+    return FollowProductions
