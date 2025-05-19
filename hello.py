@@ -51,7 +51,7 @@ def main():
                 inputString = input("Ingrese una cadena a analizar con LL(1): ")
                 if inputString.lower() == "exit":
                     break
-                result = ParsingLL1(tableLL1, Productions, inputString)
+                result = ParsingLL1(tableLL1, initialState, inputString)
                 print(result)
         elif choice == "2" and IsSLR1:
             print("Ha seleccionado el parser SLR(1)")
