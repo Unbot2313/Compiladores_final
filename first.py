@@ -21,23 +21,44 @@ def getFirstOfNonTerminal(clave: str, listOfProductions: list[str], Productions:
 
 # funcion para obtener el first
 def recursiveFirst(production: str, Productions: dict[str, list[str]]) -> set[str]:
-
     if not production:
-        return set()
+        return {"e"}  # La cadena vacía produce la cadena vacía
 
     if production == "e":
         return {"e"}
     
-    terminal, position = isNoTerminal(production)
-
-    if not terminal:
-        return {production[position]}
-
-    # contruye el set basado en las producciones del no terminal
-    first_set = set()
-    for prod in Productions[production[0]]:
-        if prod:
-            result = recursiveFirst(prod, Productions)
-            first_set = first_set.union(result)
+    # Si el primer símbolo es terminal, ese es el FIRST
+    first_char = production[0]
+    if not first_char.isupper() and first_char != "e":
+        return {first_char}
     
+    # Si el primer símbolo es no terminal, calculamos su FIRST
+    first_set = set()
+    if first_char in Productions:
+        for prod in Productions[first_char]:
+            # Evitar la recursividad infinita si el primer símbolo se repite
+            if prod and (prod[0] != first_char):
+                result = recursiveFirst(prod, Productions)
+                first_set = first_set.union(result)
+            # Si la producción deriva la cadena vacía o comienza con el mismo símbolo
+            elif not prod or prod == "e":
+                first_set.add("e")
+            elif len(prod) > 1 and prod[0] == first_char:
+                # Para manejar recursión a la izquierda como en S -> S+T
+                # Agregamos FIRST del resto de la producción (sin la S inicial)
+                rest_first = recursiveFirst(prod[1:], Productions)
+                first_set = first_set.union(rest_first)
+            # En caso de recurrir en sí mismo directamente como S -> S
+            elif prod == first_char:
+                pass  # Evitar bucle infinito
+                
+        # Si hay más símbolos después del primer no terminal
+        if len(production) > 1:
+            # Si el FIRST del primer símbolo contiene épsilon
+            if "e" in first_set:
+                first_set.remove("e")
+                # Añadir el FIRST del resto de la producción
+                rest_first = recursiveFirst(production[1:], Productions)
+                first_set = first_set.union(rest_first)
+                
     return first_set
