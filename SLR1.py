@@ -84,6 +84,9 @@ def constructLR0Automaton(productions: dict[str, list[str]], startSymbol: str) -
             transitions[(stateIndex, symbol)] = destIndex
         
         stateIndex += 1
+
+    print("Estados: ", states)
+    print("Transiciones: ", transitions)
     
     return states, transitions
 

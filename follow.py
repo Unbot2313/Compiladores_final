@@ -71,3 +71,44 @@ def thirdOption(value: str, clave: str, FollowProductions: dict[str, set[str]], 
                 FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FollowProductions[clave])
             FollowProductions[NoTerminalSymbol] = FollowProductions[NoTerminalSymbol].union(FirstBeta)
     return FollowProductions
+
+def isTerminal(symbol: str, productions: dict[str, list[str]]) -> bool:
+    """Determina si un símbolo es terminal"""
+    return symbol not in productions
+
+def computeFollow(productions: dict[str, list[str]], firstSets: dict[str, set[str]]) -> dict[str, set[str]]:
+    followSets = {nt: set() for nt in productions}
+    startSymbol = next(iter(productions))
+    followSets[startSymbol].add('$')  # S' tiene $
+
+    changed = True
+    while changed:
+        changed = False
+        for nt in productions:
+            for prod in productions[nt]:
+                for i, symbol in enumerate(prod):
+                    if symbol in productions:  # Es no terminal
+                        # Caso 1: A → αBβ => Follow(B) += First(β)
+                        if i + 1 < len(prod):
+                            nextSymbol = prod[i + 1]
+                            if isTerminal(nextSymbol, productions):
+                                # Si el siguiente símbolo es terminal, lo añadimos directamente
+                                if nextSymbol not in followSets[symbol]:
+                                    followSets[symbol].add(nextSymbol)
+                                    changed = True
+                            else:
+                                # Si es no terminal, añadimos su First (excepto ε)
+                                for s in firstSets[nextSymbol]:
+                                    if s != 'ε' and s not in followSets[symbol]:
+                                        followSets[symbol].add(s)
+                                        changed = True
+                        # Caso 2: A → αB o A → αBβ donde β =>* ε => Follow(B) += Follow(A)
+                        if i + 1 >= len(prod) or all(
+                            s in productions and 'ε' in productions[s] 
+                            for s in prod[i + 1:]
+                        ):
+                            for s in followSets[nt]:
+                                if s not in followSets[symbol]:
+                                    followSets[symbol].add(s)
+                                    changed = True
+    return followSets

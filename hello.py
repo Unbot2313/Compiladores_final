@@ -2,7 +2,7 @@ initialState: str = "S"
 
 from productions import getProductions
 from first import getFirst
-from follow import getFollowProductions
+from follow import getFollowProductions, computeFollow
 from LL1 import TableLL1, ParsingLL1
 from SLR1 import buildSLR1Table, ParsingSLR1
         
@@ -18,7 +18,7 @@ def main():
     print("first productions:", FirstProductions)
 
     # get follow productions
-    FollowProductions: dict[str, set[str]] = getFollowProductions(Productions, FirstProductions)
+    FollowProductions: dict[str, set[str]] = computeFollow(Productions, FirstProductions)
     print("follow productions:", FollowProductions)
 
 
@@ -40,7 +40,7 @@ def main():
     
     # Preguntar qué parser usar si al menos uno está disponible
     if IsLL1 or IsSLR1:
-        print("\nSeleccione qué parser desea utilizar:")
+        print("Seleccione qué parser desea utilizar:")
         if IsLL1:
             print("1. Parser LL(1)")
         if IsSLR1:
